@@ -6,6 +6,8 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract.CommonDataKinds.Phone;
+import android.provider.ContactsContract.Contacts;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -53,7 +55,7 @@ public class MainActivity extends Activity {
 
 	            // Retrieve the phone number from the NUMBER column
 	            int nameCol = cursor.getColumnIndex(Phone.DISPLAY_NAME);
-	            int numberCol = cursor.getColumnIndex(Phone.NUMBER);
+	            int numberCol = cursor.getColumnIndex(Phone.NUMBER);	            
 	            String msg = cursor.getString(nameCol) + ":" + cursor.getString(numberCol);
 	            _tv2.setText(msg);      
 			}			
@@ -65,8 +67,12 @@ public class MainActivity extends Activity {
 		if(reqCode == 0 && resCode == RESULT_OK){
 			_contactUri = data.getData();
 			_tv1.setText(_contactUri.toString());
-			//Intent i = new Intent(Intent.ACTION_EDIT, data.getData());
-			//startActivity(i);
+			Intent i = new Intent(Intent.ACTION_EDIT);
+			Uri contactUri = Contacts.getLookupUri(getContentResolver(), data.getData());
+			Log.d("ContactsExample", contactUri.toString());
+			i.setDataAndType(contactUri, Contacts.CONTENT_ITEM_TYPE);
+			i.putExtra("finishActivityOnSaveCompleted", true);
+			startActivity(i);
 			_button2.setEnabled(true);
 		}
 	}
