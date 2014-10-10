@@ -1,5 +1,11 @@
 package com.example.asynctaskexample;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+
 import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.AsyncTask.Status;
@@ -66,6 +72,7 @@ class MyAsyncTask extends AsyncTask<Integer,Integer,String>{
 	@Override
 	protected String doInBackground(Integer... input) {
 		// Worker thread
+				
 		try {
 			for(int i = 0 ; i<=input[0].intValue() ; i+=1000){
 				Thread.sleep(1000);
@@ -77,7 +84,7 @@ class MyAsyncTask extends AsyncTask<Integer,Integer,String>{
 			return input[0].toString();
 		} catch (InterruptedException e) {
 			Log.e(TAG, "interruped");
-			return null;
+			return "interruped";
 		}
 	}
 	
@@ -93,6 +100,12 @@ class MyAsyncTask extends AsyncTask<Integer,Integer,String>{
 		// UI thread
 		Log.d(TAG,"onPostExecute");
 		_tv.setText(result);
+	}
+	
+	@Override
+	protected
+	void onCancelled(){
+		_tv.setText("onCancelled");
 	}
 }
 
