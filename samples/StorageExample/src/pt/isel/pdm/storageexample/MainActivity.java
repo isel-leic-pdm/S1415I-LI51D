@@ -19,8 +19,11 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		SharedPreferences pref = getSharedPreferences("my-prefs",0);
-		pref.edit().putBoolean("a-boolean", true).commit();
+		SharedPreferences pref = getSharedPreferences("my-prefs",0);		
+		pref.edit()
+			.putBoolean("a-boolean", true)
+			.putString("name", "PDM")
+			.commit();
 		try {
 			FileOutputStream fos = this.openFileOutput("file-name", MODE_APPEND);
 			fos.write(1);

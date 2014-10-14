@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">AnotherActionBarExample</string>
+    <string name="hello_world">Hello world!</string>
+    <string name="action_settings">Settings</string>
+    <string name="action_another_settings">Another settings</string>
+    <string name="settings_value">Edit some settings here</string>
+
+</resources>
