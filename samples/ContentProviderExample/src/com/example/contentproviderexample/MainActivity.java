@@ -50,7 +50,7 @@ public class MainActivity extends ActionBarActivity {
 		String cols[] = new String[]{
 				ContactsContract.Contacts.DISPLAY_NAME,
 				ContactsContract.Contacts.PHOTO_THUMBNAIL_URI,
-				ContactsContract.Data.MIMETYPE
+				ContactsContract.CommonDataKinds.Event.START_DATE				
 		};
 		int widgets[] = new int[]{
 				R.id.itemName,
