@@ -1,4 +1,6 @@
-package com.example.contentproviderclientexample;
+package com.example.contentproviderclientexample2;
+
+import com.example.contentproviderclientexample2.R;
 
 import android.app.Activity;
 import android.app.LoaderManager.LoaderCallbacks;
@@ -6,11 +8,9 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.CursorLoader;
 import android.content.Loader;
-import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.v4.widget.CursorAdapter;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -24,46 +24,31 @@ public class MainActivity extends Activity implements LoaderCallbacks<Cursor> {
 
 	private static final String TAG = "CONTENT_PROVIDER";
 	private ListView _lv;
-	private Button _btn;
-	private int _ix;
 	private Uri _todos;
 	private SimpleCursorAdapter _adapter;
 	
 	private static void d(String fmt, Object...args){
-		Log.d(TAG,String.format(fmt,args));
+		Log.d(TAG,String.format("2:"+fmt,args));
 	}
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		ContentResolver cr = getContentResolver();
-		_todos = Uri.parse("content://com.example.contentproviderserverexample/todos");
-				
-		_ix = 0;
-		_btn = (Button) findViewById(R.id.button1);
-		_btn.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View v) {
-				ContentResolver cr = getContentResolver();
-				ContentValues values = new ContentValues();
-				values.put("desc", "study "+_ix++);
-				cr.insert(_todos, values);				
-			}			
-		});
-					
+		
 		_lv = (ListView) findViewById(R.id.listView1);
 		
-					
-		_adapter = 
-				new SimpleCursorAdapter(
-						this, R.layout.list_item, null,
-						new String[]{"_id","desc"},
-						new int[]{R.id.textView1, R.id.textView2},
-						0);
+		ContentResolver cr = getContentResolver();
+		_todos = Uri.parse("content://com.example.contentproviderserverexample/todos");
+							
+		_adapter = new SimpleCursorAdapter(
+				this, R.layout.list_item, null,
+				new String[]{"_id","desc"},
+				new int[]{R.id.textView1, R.id.textView2},
+				0);
 		_lv.setAdapter(_adapter);
-		getLoaderManager().initLoader(1, null, this);
 		
+		getLoaderManager().initLoader(1, null, this);		
 	}
 
 	@Override

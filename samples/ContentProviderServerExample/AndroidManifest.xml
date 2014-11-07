@@ -7,7 +7,18 @@
     <uses-sdk
         android:minSdkVersion="15"
         android:targetSdkVersion="21" />
-
+    
+    <permission-group
+                  android:label="string resource"
+                  android:name="com.example.contentproviderserverexample.GROUP" />
+   
+    
+    <permission 
+                android:name="com.example.contentproviderserverexample.ACCESS"
+                android:permissionGroup="com.example.contentproviderserverexample.GROUP"
+                android:protectionLevel="normal"
+                />
+    
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -23,11 +34,17 @@
             </intent-filter>
         </activity>
         
+        
+        
+        
+        
         <provider
             android:name=".MyContentProvider"
             android:authorities="com.example.contentproviderserverexample"
             android:exported="true"
-            ></provider>
+            android:permission="com.example.contentproviderserverexample.ACCESS"
+            >
+        </provider>
     </application>
 
 </manifest>

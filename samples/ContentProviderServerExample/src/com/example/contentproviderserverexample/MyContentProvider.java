@@ -1,27 +1,86 @@
 package com.example.contentproviderserverexample;
 
 import android.content.ContentProvider;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.UriMatcher;
 import android.database.Cursor;
 import android.database.MatrixCursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
+import android.util.Log;
 
 public class MyContentProvider extends ContentProvider {
 
+	private static final String AUTHORITY = MyContentProviderContract.Authority;
+	
+	private static final int ROOT_MATCH = 0;
+	private static final int TODOS_COLL_MATCH = 1;
+	private static final int TODOS_ITEM_MATCH = 2;
+
+	private static final String TAG = "CONTENT_PROVIDER";
+	
+	private static void d(String fmt, Object...args){
+		Log.d(TAG,String.format(fmt,args));
+	}
+
+	private MyOpenHelper _ds;
+
 	@Override
-	public boolean onCreate() {
-		
-		return true;
+	public boolean onCreate() {		
+		_ds = new MyOpenHelper(getContext());
+		return true; 
+	}
+	
+	private static UriMatcher _matcher;
+	
+	static {
+		_matcher = new UriMatcher(ROOT_MATCH);
+		_matcher.addURI(AUTHORITY, "todos", TODOS_COLL_MATCH);
+		_matcher.addURI(AUTHORITY, "todos/#", TODOS_ITEM_MATCH);
 	}
 
 	@Override
 	public Cursor query(Uri uri, String[] projection, String selection,
 			String[] selectionArgs, String sortOrder) {
-		MatrixCursor c = new MatrixCursor(
-				new String[]{"_id", "desc"});
-		c.addRow(new Object[]{1, "learn Android"});
-		c.addRow(new Object[]{2, "learn SQLite"});
-		return c;
+		
+		SQLiteDatabase db = _ds.getReadableDatabase();
+		Cursor c = null;
+		Context ctx = getContext();
+		d(ctx.getPackageName());
+		
+		switch(_matcher.match(uri)){
+		
+		case ROOT_MATCH:			
+		case TODOS_COLL_MATCH:
+			d("Uri = %s, TODOS_COLL_MATCH", uri);
+			c = db.query("todos", projection, 
+					selection, selectionArgs, 
+					null, null, sortOrder);
+			
+			c.setNotificationUri(
+					getContext().getContentResolver(), 
+					uri);
+			
+			return c;			
+			
+		case TODOS_ITEM_MATCH:
+			d("Uri = %s, TODOS_ITEM_MATCH", uri);
+			long id = ContentUris.parseId(uri);
+			c = db.query("todos", projection, 
+					"_id = ?", new String[]{Long.toString(id)},
+					null, null, null);
+			c.setNotificationUri(
+					getContext().getContentResolver(), 
+					uri);
+					
+			return c;
+			
+		default:
+			return null;		
+		}
+		
 	}
 
 	@Override
@@ -32,7 +91,9 @@ public class MyContentProvider extends ContentProvider {
 
 	@Override
 	public Uri insert(Uri uri, ContentValues values) {
-		// TODO Auto-generated method stub
+		SQLiteDatabase db = _ds.getWritableDatabase();
+		db.insert("todos", null, values);
+		getContext().getContentResolver().notifyChange(uri, null);
 		return null;
 	}
 
