@@ -19,7 +19,7 @@ public class MyReceiver extends BroadcastReceiver{
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		
-		Log.d(TAG, "received intent with action = "+intent.getAction());
+		Log.d(TAG, "---- received intent with action = "+intent.getAction());
 		
 		if(intent.getAction().equals(Intent.ACTION_POWER_CONNECTED)){
 			Log.d(TAG, "Power connected");
