@@ -12,6 +12,10 @@ import android.widget.TextView;
 
 public class ItemFragment extends Fragment {
 	
+	public ItemFragment(){
+		MyLog.d("ItemFragment.ctor");
+	}
+	
 	public View onCreateView(LayoutInflater inflater, ViewGroup parent, Bundle savedInstance){
 		MyLog.d("ItemFragment.onCreateView");
 		View v = inflater.inflate(R.layout.fragment_item, parent, false);

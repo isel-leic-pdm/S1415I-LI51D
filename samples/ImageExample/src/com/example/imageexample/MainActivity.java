@@ -16,23 +16,40 @@ import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Looper;
 import android.os.Message;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 	
+	private static SetViewHandler _svh = 
+			new SetViewHandler(Looper.getMainLooper());
+	private static ImageHandlerThread _th = 
+			new ImageHandlerThread();
+	private static ImageHandler _ih;
+	
+	static {
+		_th.start();
+		_ih = new ImageHandler(_svh, _th.getLooper());
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
-		
+		setContentView(R.layout.activity_main);		
 		ImageView img = (ImageView)findViewById(R.id.imageView1);
-		SetViewHandler svh = new SetViewHandler(Looper.getMainLooper());
-		ImageHandlerThread th = new ImageHandlerThread();
-		th.start();		
-		ImageHandler ih = new ImageHandler(svh, th.getLooper());
-		ih.fetchImage(img, "http://www.gravatar.com/avatar/e3a7f4454cf8bc6781c3bf7adcae366a?s=24&r=g&d=mm");		
+		_ih.fetchImage(
+				img, 
+				"http://www.gravatar.com/avatar/e3a7f4454cf8bc6781c3bf7adcae366a?s=24&r=g&d=mm");		
+	}
+}
+
+class L {
+	private static final String TAG = "IMAGE_EXAMPLE";
+
+	public static void d(String fmt, Object ...args){
+		Log.d(TAG,String.format(fmt,args));
 	}
 }
 
@@ -56,21 +73,23 @@ class ImageHandler extends Handler{
 		Data data = (Data)msg.obj; 
 		URL url;
 		try {
+			L.d("Processing fecth message");
 			url = new URL(data.uri);		
 			HttpURLConnection c = (HttpURLConnection) url.openConnection();
 			InputStream s = c.getInputStream();
 			Bitmap bm = BitmapFactory.decodeStream(s);
 			_h.publishImage(data.im, bm);
 		} catch (MalformedURLException e) {
-			
+			L.d("Exception: %s", e.getMessage());
 		} catch (IOException e) {
-			
+			L.d("Exception: %s", e.getMessage());
 		}
 	}
 	
 	public void fetchImage(ImageView im, String uri){
 		Message m = obtainMessage();
 		m.obj = new Data(uri,im);
+		L.d("Sending fetch message");
 		sendMessage(m);
 	}
 	
@@ -91,6 +110,7 @@ class SetViewHandler extends Handler{
 	}
 	
 	public void handleMessage (Message msg){
+		L.d("Processing publish message");
 		Data data = (Data)msg.obj;
 		data.im.setImageBitmap(data.bm);
 	}
@@ -98,6 +118,7 @@ class SetViewHandler extends Handler{
 	public void publishImage(ImageView im, Bitmap bm){
 		Message m = obtainMessage();
 		m.obj = new Data(im,bm);
+		L.d("Sending publish message");
 		sendMessage(m);
 	}
 	
